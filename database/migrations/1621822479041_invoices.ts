@@ -13,11 +13,12 @@ export default class Invoices extends BaseSchema {
       table.integer('entity_id').unsigned().notNullable()
       table.integer('status_id').unsigned().notNullable().defaultTo(1)
       table.integer('status').unsigned().notNullable().defaultTo(0)
-      table.timestamp('date')
+      table.timestamp('date', { useTz: true }).defaultTo(this.now())
       table.foreign('user_id').references('id').inTable('users')
       table.foreign('entity_id').references('id').inTable('entities')
       // table.foreign('status_id').references('id').inTable('status_invoice')
-      table.timestamps(true, true)
+      table.timestamp('created_at', { useTz: true }).defaultTo(this.now())
+      table.timestamp('updated_at', { useTz: true }).defaultTo(this.now())
     })
   }
 

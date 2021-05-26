@@ -8,10 +8,11 @@ export default class Users extends BaseSchema {
       table.increments('id').primary()
       table.string('name').notNullable()
       table.string('surname').notNullable()
-      table.string('password').notNullable()
-      table.string('email').unique().notNullable()
-
-      table.timestamps(true, true)
+      table.string('email', 255).unique().notNullable()
+      table.string('password', 180).notNullable()
+      table.string('remember_me_token').nullable()
+      table.timestamp('created_at', { useTz: true }).defaultTo(this.now())
+      table.timestamp('updated_at', { useTz: true }).defaultTo(this.now())
     })
   }
 

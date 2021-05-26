@@ -1,7 +1,7 @@
+import Application from '@ioc:Adonis/Core/Application'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
 import Invoice from 'App/Models/Invoice'
-import LogInvoice from 'App/Models/LogInvoice'
 
 export default class InvoicesController {
   public async index ({}: HttpContextContract) {
@@ -12,7 +12,6 @@ export default class InvoicesController {
   public async sing ({request}: HttpContextContract) {
     const invoicesId = request.input('invoices_id')
     const userId = request.input('user_id')
-    console.log('hola',invoicesId,userId)
     const invoices = await Database
       .query()
       .select(
@@ -30,10 +29,9 @@ export default class InvoicesController {
         this.on('invoices.entity_id', '=', 'configs_entity_users.entity_id')
           .on('invoices.status_id', '=', 'configs_entity_users.status_id')
       })
-      .where('invoices.id', invoicesId)
+      .whereIn('invoices.id', [invoicesId])
       .where('configs_entity_users.user_id', userId)
 
-    console.log('hola')
     invoices.forEach(async ({
       total_signatures: totalSignatures, status, status_id: statusId, id,
     }) => {
@@ -42,7 +40,7 @@ export default class InvoicesController {
         : { status: status + 1, status_id: statusId }
 
       await Invoice.query().where('id', id).update(newInvoice)
-      await Database.table('log_invoice').insert({
+      await Database.table('log_invoices').insert({
         action: 'add',
         status_id_before: statusId,
         status_id_after: newInvoice.status_id,
@@ -55,10 +53,18 @@ export default class InvoicesController {
     return invoices
   }
 
-  public async create ({}: HttpContextContract) {
+  public async create ({request}: HttpContextContract) {
   }
 
-  public async store ({}: HttpContextContract) {
+  public async store ({request}: HttpContextContract) {
+    const coverImage = request.file('image')
+
+    if (coverImage) {
+      console.log('entrando al if')
+
+      await coverImage.move(Application.tmpPath('uploads'))
+    }
+    return 'ok'
   }
 
   public async show ({}: HttpContextContract) {

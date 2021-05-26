@@ -8,7 +8,8 @@ export default class StatusInvoices extends BaseSchema {
       table.increments('id')
       table.string('name').notNullable().defaultTo('OC')
       table.string('description').notNullable().defaultTo('Orden de compra')
-      table.timestamps(true, true)
+      table.timestamp('created_at', { useTz: true }).defaultTo(this.now())
+      table.timestamp('updated_at', { useTz: true }).defaultTo(this.now())
       //enu('column', ['value1', 'value2'])
     })
   }

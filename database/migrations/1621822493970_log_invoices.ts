@@ -17,7 +17,8 @@ export default class LogInvoices extends BaseSchema {
       table.foreign('invoice_id').references('id').inTable('invoices')
       //  table.foreign('status_id_before').references('id').inTable('status_invoice')
       // table.foreign('status_id_after').references('id').inTable('status_invoice')
-      table.timestamps(true, true)
+      table.timestamp('created_at', { useTz: true }).defaultTo(this.now())
+      table.timestamp('updated_at', { useTz: true }).defaultTo(this.now())
     })
   }
 

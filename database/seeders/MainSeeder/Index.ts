@@ -8,6 +8,7 @@ export default class IndexSeeder extends BaseSeeder {
      * only
      */
     if (seeder.default.developmentOnly && !Application.inDev) {
+      await this.runProd()
       return
     }
 
@@ -22,5 +23,9 @@ export default class IndexSeeder extends BaseSeeder {
     await this.runSeeder(await import('../ConfigEntityUser'))
     await this.runSeeder(await import('../Invoice'))
     await this.runSeeder(await import('../LogInvoice'))
+  }
+
+  public async runProd () {
+    await this.runSeeder(await import('../Invoice'))
   }
 }
